@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control del Carro 4WD</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      .button {
+        padding: 15px;
+        margin: 15px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 10px;
+        background-color: #0073ff;
+        color: white;
+        border: none;
+      }
+      .button:hover {
+        background-color: #45a049;
+      }
+      .control-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .control-buttons div {
+        margin: 10px;
+      }
+      #estado {
+        font-size: 28px;
+        margin-top: 30px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Control del Carro 4WD</h1>
+    <div class="control-buttons">
+      <div>
+        <button class="button" onclick="sendCommand('F', 'Avanzando')">
+          Avanzar (W)
+        </button>
+      </div>
+
+      <div>
+        <button class="button" onclick="sendCommand('B', 'Retrocediendo')">
+          Retroceder (S)
+        </button>
+      </div>
+
+      <div>
+        <button
+          class="button"
+          onclick="sendCommand('L', 'Girando a la izquierda')"
+        >
+          Izquierda (A)
+        </button>
+      </div>
+
+      <div>
+        <button
+          class="button"
+          onclick="sendCommand('R', 'Girando a la derecha')"
+        >
+          Derecha (D)
+        </button>
+      </div>
+      <div>
+        <button class="button" onclick="sendCommand('S', 'Detenido')">
+          Detener (Q)
+        </button>
+      </div>
+    </div>
+
+    <div id="estado">Estado: Esperando comando...</div>
+
+    <script>
+      const ESP32_IP = "http://192.168.1.147"; // Cambia esto a la IP de tu ESP32
+
+      function sendCommand(command, estadoTexto) {
+        document.getElementById("estado").textContent =
+          "Estado: " + estadoTexto;
+        fetch(`${ESP32_IP}/${command}`, { mode: "no-cors" })
+          .then((response) => {
+            console.log(`Comando ${command} enviado`);
+          })
+          .catch((error) => {
+            console.error("Error al enviar comando:", error);
+          });
+      }
+
+      // Escuchar las teclas WASD para enviar los comandos
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "w" || event.key === "W") {
+          sendCommand("F", "Avanzando");
+        } else if (event.key === "s" || event.key === "S") {
+          sendCommand("B", "Retrocediendo");
+        } else if (event.key === "a" || event.key === "A") {
+          sendCommand("L", "Girando a la izquierda");
+        } else if (event.key === "d" || event.key === "D") {
+          sendCommand("R", "Girando a la derecha");
+        } else if (event.key === "q" || event.key === "Q") {
+          sendCommand("S", "Detenido");
+        }
+      });
+    </script>
+  </body>
+</html>
